@@ -3,6 +3,18 @@ import store
 
 
 def start(store_items):
+    """
+        Run the interactive command-line interface for the store system.
+
+        Allows the user to:
+        - View all available products
+        - View total stock quantity
+        - Create and submit an order
+        - Exit the program
+
+        Args:
+            store_items (Store): The store instance containing products.
+    """
     while True:
         print("\n\tStore Menu")
         print("\t__________")
@@ -15,10 +27,7 @@ def start(store_items):
         if user_input == 1:
             all_products = store_items.get_all_products()
             for nos, item in enumerate(all_products, 1):
-                print(
-                    f"{nos}: {products.Product.get_name(item)}, Price: "
-                    f"{products.Product.get_price(item)}, Quantity: "
-                    f"{products.Product.get_quantity(item)}")
+                print(f"{nos}: {products.Product.show(item)}")
             print("________")
 
         elif user_input == 2:
@@ -28,10 +37,7 @@ def start(store_items):
         elif user_input == 3:
             all_products = store_items.get_all_products()
             for nos, item in enumerate(all_products, 1):
-                print(
-                    f"{nos}: {products.Product.get_name(item)}, Price: "
-                    f"{products.Product.get_price(item)}, Quantity: "
-                    f"{products.Product.get_quantity(item)}")
+                print(f"{nos}: {products.Product.show(item)}")
             print("________")
 
             print("When you want to finish order, enter empty text. ")
@@ -83,6 +89,12 @@ def start(store_items):
 
 
 def main():
+    """
+        Entry point for the store application.
+
+        Creates sample products, initializes the store,
+        and starts the CLI.
+    """
     product_list = [
         products.Product("MacBook Air M2", price=1450, quantity=100),
         products.Product("Bose QuietComfort Earbuds", price=250, quantity=500),
