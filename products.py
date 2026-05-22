@@ -62,7 +62,8 @@ class Product:
         return self._active
 
     def show(self):
-        return f"{self._name}, Price: {self._price}, Quantity: {self._quantity}"
+        return (f"{self._name}, Price: {self._price}, Quantity: "
+                f"{self._quantity}")
 
     def buy(self, quantity):
         try:
