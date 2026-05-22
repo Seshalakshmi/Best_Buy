@@ -64,7 +64,7 @@ class Store:
                 active_products.append(item)
 
         if not active_products:
-            return f"There is no product in this store"
+            return "There is no product in this store"
 
         return active_products
 

@@ -103,8 +103,7 @@ class Product:
         """
         if self._active:
             return Product.activate(self)
-        else:
-            return Product.deactivate(self)
+        return Product.deactivate(self)
 
     def activate(self):
         """
