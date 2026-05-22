@@ -2,18 +2,100 @@ import products
 import store
 
 
-def start(store_items):
-    """
-        Run the interactive command-line interface for the store system.
-
-        Allows the user to:
-        - View all available products
-        - View total stock quantity
-        - Create and submit an order
-        - Exit the program
+def list_of_products_in_store(store_items):
+    """Display all available products in the store.
 
         Args:
-            store_items (Store): The store instance containing products.
+            store_items (store.Store): Store instance containing products.
+
+        Prints:
+            Enumerated list of products with details.
+    """
+    all_products = store_items.get_all_products()
+    for nos, item in enumerate(all_products, 1):
+        print(f"{nos}: {products.Product.show(item)}")
+    print("________")
+
+
+def total_stock_quantity(store_items):
+    """Display the total quantity of items available in the store.
+
+        Args:
+            store_items (store.Store): Store instance containing products.
+    """
+    print(f"Total of {store_items.get_total_quantity()} items in store")
+
+
+def make_order(store_items):
+    """Handle the order creation process.
+
+       Allows the user to:
+       - Select products by number
+       - Specify purchase quantities
+       - Add multiple products to an order
+       - Calculate the total payment amount
+
+       Args:
+           store_items (store.Store): Store instance used for ordering.
+
+       Prints:
+           Order status messages, validation errors,
+           and final payment amount.
+    """
+    all_products = store_items.get_all_products()
+    list_of_products_in_store(store_items)
+    print("When you want to finish order, enter empty text. ")
+    purchased = []
+    total_amount = 0
+    while True:
+        shopping = input("Which product # do you want? ")
+        if shopping == "":
+            print("Thank You. Welcome!")
+            break
+
+        purchase_quantity = input("What amount do you want? ")
+        if purchase_quantity == "":
+            print("Error while making order!")
+            continue
+
+        try:
+            shopping = int(shopping)
+            purchase_quantity = int(purchase_quantity)
+
+        except ValueError:
+            print("Error adding product!")
+            continue
+
+        for nos, item in enumerate(all_products, 1):
+            if shopping == nos:
+                if purchase_quantity <= products.Product.get_quantity(item):
+                    purchased.append((item, int(purchase_quantity)))
+                elif purchase_quantity > products.Product.get_quantity(item):
+                    print(
+                        "Error while making order! Quantity larger than what "
+                        "exists")
+        if purchased:
+            total_amount += store_items.order(purchased)
+            print("Product added to list!")
+
+    if total_amount > 0:
+        print("*********")
+        print(f"Order made! Total payment: ${total_amount}")
+
+
+def exit_program():
+    """Exit the store application."""
+    print("GoodBye!")
+
+
+def start(store_items):
+    """Run the interactive store menu loop.
+
+        Displays menu options and handles user input until
+        the user chooses to quit.
+
+        Args:
+            store_items (store.Store): Store instance used by the application.
     """
     while True:
         print("\n\tStore Menu")
@@ -23,69 +105,29 @@ def start(store_items):
               "3. Make an order\n"
               "4. Quit")
 
-        user_input = int(input("Please choose a number: "))
-        if user_input == 1:
-            all_products = store_items.get_all_products()
-            for nos, item in enumerate(all_products, 1):
-                print(f"{nos}: {products.Product.show(item)}")
-            print("________")
+        options = {
+            1: list_of_products_in_store,
+            2: total_stock_quantity,
+            3: make_order
+        }
 
-        elif user_input == 2:
-            print(
-                f"Total of {store_items.get_total_quantity()} items in store")
+        user_input = input("Please choose a number: ")
+        if not user_input.isdigit():
+            print("Please provide a valid number")
+            continue
 
-        elif user_input == 3:
-            all_products = store_items.get_all_products()
-            for nos, item in enumerate(all_products, 1):
-                print(f"{nos}: {products.Product.show(item)}")
-            print("________")
+        user_input = int(user_input)
 
-            print("When you want to finish order, enter empty text. ")
-            total_amount = 0
-            while True:
-                shopping = input("Which product # do you want? ")
-                if shopping == "":
-                    print("Thank You. Welcome!")
-                    break
-
-                purchase_quantity = input("What amount do you want? ")
-                if purchase_quantity == "":
-                    print("Error while making order!")
-                    continue
-
-                try:
-                    shopping = int(shopping)
-                    purchase_quantity = int(purchase_quantity)
-
-                except ValueError:
-                    print("Error adding product!")
-                    continue
-                purchased = []
-                for nos, item in enumerate(all_products, 1):
-                    if (int(shopping) == nos and int(
-                            purchase_quantity) <=
-                            products.Product.get_quantity(
-                            item)):
-                        purchased.append((item, int(purchase_quantity)))
-
-                if purchased:
-                    total_amount += store_items.order(purchased)
-                    print("Product added to list!")
-
-            if total_amount > 0:
-                print("*********")
-                print(f"Order made! Total payment: ${total_amount}")
-            else:
-                print(
-                    "Error while making order! Quantity larger than what "
-                    "exists")
-
-        elif user_input == 4:
-            print("GoodBye!")
+        if user_input == 4:
+            exit_program()
             break
 
+        action = options.get(user_input)
+
+        if action:
+            action(store_items)
         else:
-            print("Error with your choice! Try again!")
+            print("Invalid option")
 
 
 def main():
@@ -99,7 +141,7 @@ def main():
         products.Product("MacBook Air M2", price=1450, quantity=100),
         products.Product("Bose QuietComfort Earbuds", price=250, quantity=500),
         products.Product("Google Pixel 7", price=500, quantity=250)
-        ]
+    ]
     best_buy = store.Store(product_list)
     start(best_buy)
 

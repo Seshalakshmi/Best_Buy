@@ -1,3 +1,6 @@
+from products import Product
+
+
 class Store:
     """
     Represents a store that manages a collection of Product objects.
@@ -5,6 +8,7 @@ class Store:
     Provides functionality to add/remove products, calculate total stock,
     retrieve active products, and process customer orders.
     """
+
     def __init__(self, list_of_products):
         """
         Initialize the store with a list of products.
@@ -57,18 +61,15 @@ class Store:
             list[Product] | str: List of active products,
             or a message if no active products exist.
         """
-        active_products = []
-
-        for item in self.list_of_products:
-            if item.is_active():
-                active_products.append(item)
+        active_products = [item for item in self.list_of_products if
+                           item.is_active() == True]
 
         if not active_products:
             return "There is no product in this store"
 
         return active_products
 
-    def order(self, shopping_list):
+    def order(self, shopping_list) -> float:
         """
         Process a customer order.
 
@@ -85,4 +86,4 @@ class Store:
         for item, quantity in shopping_list:
             total_price += item.buy(quantity)
 
-        return total_price
+        return float(total_price)

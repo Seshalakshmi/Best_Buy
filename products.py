@@ -5,7 +5,7 @@ class Product:
         Provides methods to get and set attributes, activate/deactivate the product,
         display product information, and process purchases.
     """
-    def __init__(self, name, price, quantity):
+    def __init__(self, name:str, price:float, quantity:int):
         """
                 Initialize a new Product instance.
 
@@ -14,62 +14,26 @@ class Product:
                     price (int | float): The price per unit of the product.
                     quantity (int): The available stock quantity.
         """
-        self._name = name
-        self._price = price
-        self._quantity = quantity
+        if not name:
+            raise ValueError("Name is required")
+
+        if not price or price < 0:
+            raise ValueError("Price is required")
+
+        if not quantity or quantity < 0:
+            raise ValueError("Quantity is required")
+
+        try:
+            self._name = name
+            self._price = price
+            self._quantity = quantity
+        except ValueError as e:
+            print(e)
+
         self._active = True
 
-    def get_name(self):
-        """Return the name of the product."""
-        return self._name
 
-    def set_name(self, new_name):
-        """
-                Set a new name for the product.
-
-                Args:
-                    new_name (str): The new product name.
-
-                Raises:
-                    ValueError: If new_name is empty or not a string.
-                    TypeError: If type is invalid.
-        """
-        try:
-            if isinstance(new_name, str) and new_name != "":
-                self._name = new_name
-            else:
-                raise ValueError("New name is Invalid")
-        except TypeError:
-            print("Name should be a string")
-        except ValueError as e:
-            print(e)
-
-    def get_price(self):
-        """Return the price of the product."""
-        return self._price
-
-    def set_price(self, new_price):
-        """
-                Set a new price for the product.
-
-                Args:
-                    new_price (int): The new price value (must be positive integer).
-
-                Raises:
-                    ValueError: If price is not a positive integer.
-                    TypeError: If type is invalid.
-        """
-        try:
-            if isinstance(new_price, int) and new_price > 0:
-                self._price = new_price
-            else:
-                raise ValueError("New price is Invalid")
-        except TypeError:
-            print("Price should be a integer")
-        except ValueError as e:
-            print(e)
-
-    def get_quantity(self):
+    def get_quantity(self) -> int:
         """Return the available quantity of the product."""
         return self._quantity
 
@@ -101,9 +65,7 @@ class Product:
             Returns:
                 bool: True if active, False otherwise.
         """
-        if self._active:
-            return Product.activate(self)
-        return Product.deactivate(self)
+        return self._active
 
     def activate(self):
         """
@@ -113,7 +75,7 @@ class Product:
                 bool: True after activation.
         """
         self._active = True
-        return self._active
+
 
     def deactivate(self):
         """
@@ -123,7 +85,7 @@ class Product:
             bool: False after deactivation.
         """
         self._active = False
-        return self._active
+
 
     def show(self):
         """
@@ -137,20 +99,28 @@ class Product:
 
     def buy(self, quantity):
         """
-                Purchase a given quantity of the product.
+            Purchase a given quantity of the product.
 
-                Reduces stock if enough quantity is available.
+            Reduces stock if enough quantity is available.
 
-                Args:
-                    quantity (int): Number of items to purchase.
+            Args:
+                quantity (int): Number of items to purchase.
 
-                Returns:
-                    float: Total price for the purchase.
-                    None: If purchase is invalid or insufficient stock.
+            Returns:
+                float: Total price for the purchase.
+                None: If purchase is invalid or insufficient stock.
         """
-        try:
-            if quantity <= self._quantity:
-                self._quantity = self._quantity - quantity
-                return float(self._price * quantity)
-        except ValueError:
-            print("Invalid quantity")
+        if quantity > self._quantity:
+            raise ValueError("Quantity is out of stock")
+        if quantity <= 0:
+            raise ValueError("Please type a positive number")
+
+        self._quantity -= quantity
+
+        if self._quantity == 0:
+            self.deactivate()
+        return float(self._price * quantity)
+
+
+
+
