@@ -1,4 +1,4 @@
-import products
+from products import Product
 import store
 
 
@@ -13,7 +13,7 @@ def list_of_products_in_store(store_items):
     """
     all_products = store_items.get_all_products()
     for nos, item in enumerate(all_products, 1):
-        print(f"{nos}: {products.Product.show(item)}")
+        print(f"{nos}: {Product.show(item)}")
     print("________")
 
 
@@ -68,9 +68,9 @@ def make_order(store_items):
 
         for nos, item in enumerate(all_products, 1):
             if shopping == nos:
-                if purchase_quantity <= products.Product.get_quantity(item):
+                if purchase_quantity <= Product.get_quantity(item):
                     purchased.append((item, int(purchase_quantity)))
-                elif purchase_quantity > products.Product.get_quantity(item):
+                elif purchase_quantity > Product.get_quantity(item):
                     print(
                         "Error while making order! Quantity larger than what "
                         "exists")
@@ -138,9 +138,9 @@ def main():
         and starts the CLI.
     """
     product_list = [
-        products.Product("MacBook Air M2", price=1450, quantity=100),
-        products.Product("Bose QuietComfort Earbuds", price=250, quantity=500),
-        products.Product("Google Pixel 7", price=500, quantity=250)
+        Product("MacBook Air M2", price=1450, quantity=100),
+        Product("Bose QuietComfort Earbuds", price=250, quantity=500),
+        Product("Google Pixel 7", price=500, quantity=250)
     ]
     best_buy = store.Store(product_list)
     start(best_buy)

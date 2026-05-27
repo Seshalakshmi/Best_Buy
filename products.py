@@ -110,16 +110,19 @@ class Product:
                 float: Total price for the purchase.
                 None: If purchase is invalid or insufficient stock.
         """
-        if quantity > self._quantity:
-            raise ValueError("Quantity is out of stock")
-        if quantity <= 0:
-            raise ValueError("Please type a positive number")
+        if self._active:
+            if quantity > self._quantity:
+                raise ValueError("Quantity is out of stock")
+            if quantity <= 0:
+                raise ValueError("Please type a positive number")
 
-        self._quantity -= quantity
+            self._quantity -= quantity
 
-        if self._quantity == 0:
-            self.deactivate()
-        return float(self._price * quantity)
+            if self._quantity == 0:
+                self.deactivate()
+            return float(self._price * quantity)
+        else:
+            return f"This product is inactive"
 
 
 
