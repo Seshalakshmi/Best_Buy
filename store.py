@@ -1,6 +1,3 @@
-from products import Product
-
-
 class Store:
     """
     Represents a store that manages a collection of Product objects.
