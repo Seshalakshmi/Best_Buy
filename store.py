@@ -10,13 +10,16 @@ class Store:
 
     def __init__(self, list_of_products:list[Product]):
         """
-        Initialize the store with a list of products.
+        Initialize a Store instance.
 
         Args:
-            list_of_products (list): List of Product instances.
+            list_of_products: Initial collection of products.
+
+        Raises:
+            TypeError: If `list_of_products` is not a list.
         """
-        if not isinstance(list_of_products, list):
-            raise TypeError("List of products should be list of Product")
+        if not all(isinstance(item, Product) for item in list_of_products):
+            raise TypeError("All items must be Product instances")
 
         self.list_of_products = list_of_products
 
@@ -26,7 +29,10 @@ class Store:
         Add a product to the store inventory.
 
         Args:
-            product (Product): The product to add.
+            product: Product to add.
+
+        Raises:
+            TypeError: If `product` is not a Product instance.
         """
         if not isinstance(product, Product):
             raise TypeError("products must be a Product")
@@ -39,10 +45,11 @@ class Store:
         Remove a product from the store inventory.
 
         Args:
-            product (Product): The product to remove.
+            product: Product to remove.
 
         Raises:
-            ValueError: If the product is not in the list.
+            TypeError: If `product` is not a Product instance.
+            ValueError: If the product does not exist in the inventory.
         """
         if not isinstance(product, Product):
             raise TypeError("products must be a Product")
@@ -55,10 +62,13 @@ class Store:
 
     def get_total_quantity(self):
         """
-        Calculate the total quantity of all products in the store.
+        Calculate the total quantity of all products in inventory.
 
         Returns:
-            int: Total quantity across all products.
+            int: Total number of units available across all products.
+
+        Raises:
+            TypeError: If an inventory item is not a Product instance.
         """
         total_quantity = 0
 
@@ -76,11 +86,11 @@ class Store:
         Retrieve all active products in the store.
 
         Returns:
-            list[Product] | str: List of active products,
-            or a message if no active products exist.
+            list[Product]: Active products currently available.
+            str: Message indicating that no active products exist.
         """
         active_products = [item for item in self.list_of_products if
-                           item.is_active() == True]
+                           item.is_active()]
 
         if not active_products:
             return "There is no product in this store"
@@ -88,18 +98,22 @@ class Store:
         return active_products
 
 
-    def order(self, shopping_list) -> float:
+    def order(self, shopping_list: list[tuple[Product, int]]) -> float:
         """
-        Process a customer order.
+        Process a customer order and calculate the total cost.
 
-        Each item in shopping_list should be a tuple:
-        (Product, quantity)
+        Each item in `shopping_list` must be a tuple containing a
+        Product instance and the desired purchase quantity.
 
         Args:
-            shopping_list (list[tuple]): List of (Product, quantity) pairs.
+            shopping_list: Iterable of (Product, quantity) tuples.
 
         Returns:
-            float: Total price of the order.
+            float: Total price of all purchased items.
+
+        Raises:
+            ValueError: If a product cannot fulfill the requested quantity.
+            TypeError: If the shopping list contains invalid entries.
         """
         total_price = 0
         for item, quantity in shopping_list:

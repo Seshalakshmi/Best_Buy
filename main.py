@@ -1,48 +1,71 @@
 from products import Product
-import store
+from store import Store
 
+"""
+Command-line interface for the store management application.
 
-def list_of_products_in_store(store_items):
-    """Display all available products in the store.
+This module provides the user-facing functionality for interacting
+with the store, including viewing available products, checking
+inventory levels, placing orders, and exiting the application.
+"""
 
-        Args:
-            store_items (store.Store): Store instance containing products.
+def list_of_products_in_store(store_items: Store) -> None:
+    """
+    Display all active products available in the store inventory.
 
-        Prints:
-            Enumerated list of products with details.
+    Retrieves the list of active products from the provided store and
+    prints each product with a numbered index and its details.
+
+    Args:
+        store_items: The store instance containing the product inventory.
     """
     all_products = store_items.get_all_products()
+    if not all_products:
+        print("No products available.")
+        return
+
     for nos, item in enumerate(all_products, 1):
         print(f"{nos}: {Product.show(item)}")
     print("________")
 
 
-def total_stock_quantity(store_items):
-    """Display the total quantity of items available in the store.
-
-        Args:
-            store_items (store.Store): Store instance containing products.
+def total_stock_quantity(store_items: Store) -> None:
     """
+    Display the total quantity of products currently available in the store.
+
+    Args:
+        store_items: The store instance whose inventory quantity is
+            calculated and displayed.
+    """
+    if not store_items:
+        print("No products available.")
+        return
+
     print(f"Total of {store_items.get_total_quantity()} items in store")
 
 
-def make_order(store_items):
-    """Handle the order creation process.
+def make_order(store_items: Store) -> None:
+    """
+    Interactively create and process a customer order.
 
-       Allows the user to:
-       - Select products by number
-       - Specify purchase quantities
-       - Add multiple products to an order
-       - Calculate the total payment amount
+    Prompts the user to select products and specify purchase quantities.
+    Selected items are collected into an order and submitted to the store
+    for processing. Upon successful completion, the total payment amount
+    is displayed.
 
-       Args:
-           store_items (store.Store): Store instance used for ordering.
+    Args:
+        store_items: The store instance used to retrieve products and
+            process customer purchases.
 
-       Prints:
-           Order status messages, validation errors,
-           and final payment amount.
+    Raises:
+        ValueError: Propagated if an invalid order is submitted.
+        TypeError: Propagated if invalid order data is encountered.
     """
     all_products = store_items.get_all_products()
+    if not all_products:
+        print("No products available.")
+        return
+
     list_of_products_in_store(store_items)
     print("When you want to finish order, enter empty text. ")
     purchased = []
@@ -89,19 +112,24 @@ def make_order(store_items):
         print("No items ordered.")
 
 
-def exit_program():
-    """Exit the store application."""
+def exit_program() -> None:
+    """
+    Display a farewell message and terminate the application.
+    """
     print("GoodBye!")
 
 
-def start(store_items):
-    """Run the interactive store menu loop.
+def start(store_items: Store) -> None:
+    """
+    Launch the interactive store menu.
 
-        Displays menu options and handles user input until
-        the user chooses to quit.
+    Displays available menu options, processes user selections,
+    and continues execution until the user chooses to exit the
+    application.
 
-        Args:
-            store_items (store.Store): Store instance used by the application.
+    Args:
+        store_items: The store instance used to perform inventory
+            and ordering operations.
     """
     while True:
         print("\n\tStore Menu")
@@ -136,19 +164,19 @@ def start(store_items):
             print("Invalid option")
 
 
-def main():
+def main() -> None:
     """
-        Entry point for the store application.
+    Initialize and run the store application.
 
-        Creates sample products, initializes the store,
-        and starts the CLI.
+    Creates the initial product inventory, instantiates the store,
+    and starts the command-line interface.
     """
     product_list = [
         Product("MacBook Air M2", price=1450, quantity=100),
         Product("Bose QuietComfort Earbuds", price=250, quantity=500),
         Product("Google Pixel 7", price=500, quantity=250)
     ]
-    best_buy = store.Store(product_list)
+    best_buy = Store(product_list)
     start(best_buy)
 
 
