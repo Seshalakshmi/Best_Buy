@@ -46,7 +46,6 @@ def make_order(store_items):
     list_of_products_in_store(store_items)
     print("When you want to finish order, enter empty text. ")
     purchased = []
-    total_amount = 0
     while True:
         shopping = input("Which product # do you want? ")
         if shopping == "":
@@ -59,28 +58,35 @@ def make_order(store_items):
             continue
 
         try:
-            shopping = int(shopping)
+            shopping = int(shopping) - 1
             purchase_quantity = int(purchase_quantity)
 
         except ValueError:
             print("Error adding product!")
             continue
 
-        for nos, item in enumerate(all_products, 1):
-            if shopping == nos:
-                if purchase_quantity <= Product.get_quantity(item):
-                    purchased.append((item, int(purchase_quantity)))
-                elif purchase_quantity > Product.get_quantity(item):
-                    print(
-                        "Error while making order! Quantity larger than what "
-                        "exists")
-        if purchased:
-            total_amount += store_items.order(purchased)
-            print("Product added to list!")
+        if shopping < 0 or shopping >= len(all_products):
+            print("Error: Invalid product number!")
+            continue
 
-    if total_amount > 0:
-        print("*********")
-        print(f"Order made! Total payment: ${total_amount}")
+        item = all_products[shopping]
+
+        if purchase_quantity <= 0:
+            print("Error: Quantity must be greater than zero.")
+            continue
+
+        purchased.append((item, purchase_quantity))
+        print("Product added to list!")
+
+    if purchased:
+        try:
+            total_payment = store_items.order(purchased)
+            print("*********")
+            print(f"Order made! Total payment: ${total_payment:.2f}")
+        except (TypeError, ValueError) as e:
+            print(f"Order execution failed: {e}")
+    else:
+        print("No items ordered.")
 
 
 def exit_program():

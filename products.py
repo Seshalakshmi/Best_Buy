@@ -1,3 +1,5 @@
+from typing import Union
+
 class Product:
     """
         Represents a product with a name, price, quantity, and active status.
@@ -5,7 +7,7 @@ class Product:
         Provides methods to get and set attributes, activate/deactivate the product,
         display product information, and process purchases.
     """
-    def __init__(self, name:str, price:float, quantity:int):
+    def __init__(self, name:str, price:Union[float, int], quantity:int):
         """
                 Initialize a new Product instance.
 
@@ -14,6 +16,15 @@ class Product:
                     price (int | float): The price per unit of the product.
                     quantity (int): The available stock quantity.
         """
+        if not isinstance(name, str):
+            raise TypeError("Name should be string")
+
+        if not isinstance(price, Union[float, int]):
+            raise TypeError("Price should be a float or integer")
+
+        if not isinstance(quantity, int):
+            raise TypeError("Quantity should be an integer")
+
         if not name:
             raise ValueError("Name is required")
 
@@ -23,13 +34,9 @@ class Product:
         if not quantity or quantity < 0:
             raise ValueError("Quantity is required")
 
-        try:
-            self._name = name
-            self._price = price
-            self._quantity = quantity
-        except ValueError as e:
-            print(e)
-
+        self._name = name
+        self._price = price
+        self._quantity = quantity
         self._active = True
 
 
@@ -37,7 +44,7 @@ class Product:
         """Return the available quantity of the product."""
         return self._quantity
 
-    def set_quantity(self, new_quantity):
+    def set_quantity(self, new_quantity:int):
         """
                 Set a new quantity for the product.
 
@@ -48,15 +55,20 @@ class Product:
                     ValueError: If quantity is not a positive integer.
                     TypeError: If type is invalid.
         """
-        try:
-            if isinstance(new_quantity, int) and new_quantity > 0:
-                self._quantity = new_quantity
-            else:
-                raise ValueError("New Quantity is Invalid")
-        except TypeError:
-            print("Quantity should be a integer")
-        except ValueError as e:
-            print(e)
+        if not isinstance(new_quantity, int) and new_quantity > 0:
+            raise TypeError("Quantity is Invalid")
+
+        if new_quantity > self._quantity:
+            raise ValueError("Quantity is out of stock")
+
+        if new_quantity < 0:
+            raise ValueError("Please type a positive number")
+
+        self._quantity -= new_quantity
+
+        if self._quantity == 0:
+            self.deactivate()
+
 
     def is_active(self):
         """
@@ -97,7 +109,7 @@ class Product:
         return (f"{self._name}, Price: {self._price}, Quantity: "
                 f"{self._quantity}")
 
-    def buy(self, quantity):
+    def buy(self, quantity:int):
         """
             Purchase a given quantity of the product.
 
@@ -108,22 +120,13 @@ class Product:
 
             Returns:
                 float: Total price for the purchase.
-                None: If purchase is invalid or insufficient stock.
+
+            Raises:
+                ValueError: If purchase is invalid or insufficient stock.
         """
         if self._active:
-            if quantity > self._quantity:
-                raise ValueError("Quantity is out of stock")
-            if quantity <= 0:
-                raise ValueError("Please type a positive number")
-
-            self._quantity -= quantity
-
-            if self._quantity == 0:
-                self.deactivate()
+            self.set_quantity(quantity)
             return float(self._price * quantity)
+
         else:
-            return f"This product is inactive"
-
-
-
-
+            raise ValueError("This product is inactive")

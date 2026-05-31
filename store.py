@@ -1,3 +1,5 @@
+from products import Product
+
 class Store:
     """
     Represents a store that manages a collection of Product objects.
@@ -6,25 +8,33 @@ class Store:
     retrieve active products, and process customer orders.
     """
 
-    def __init__(self, list_of_products):
+    def __init__(self, list_of_products:list[Product]):
         """
         Initialize the store with a list of products.
 
         Args:
             list_of_products (list): List of Product instances.
         """
+        if not isinstance(list_of_products, list):
+            raise TypeError("List of products should be list of Product")
+
         self.list_of_products = list_of_products
 
-    def add_product(self, product):
+
+    def add_product(self, product:Product):
         """
         Add a product to the store inventory.
 
         Args:
             product (Product): The product to add.
         """
+        if not isinstance(product, Product):
+            raise TypeError("products must be a Product")
+
         self.list_of_products.append(product)
 
-    def remove_product(self, product):
+
+    def remove_product(self, product:Product):
         """
         Remove a product from the store inventory.
 
@@ -34,7 +44,14 @@ class Store:
         Raises:
             ValueError: If the product is not in the list.
         """
+        if not isinstance(product, Product):
+            raise TypeError("products must be a Product")
+
+        if product not in self.list_of_products:
+            raise ValueError("Product not found")
+
         self.list_of_products.remove(product)
+
 
     def get_total_quantity(self):
         """
@@ -46,9 +63,13 @@ class Store:
         total_quantity = 0
 
         for item in self.list_of_products:
+            if not isinstance(item, Product):
+                raise TypeError("Item must be Product")
+
             total_quantity += item.get_quantity()
 
         return total_quantity
+
 
     def get_all_products(self):
         """
@@ -65,6 +86,7 @@ class Store:
             return "There is no product in this store"
 
         return active_products
+
 
     def order(self, shopping_list) -> float:
         """
